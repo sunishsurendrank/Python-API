@@ -6,6 +6,7 @@
 
 from abc import ABC, abstractmethod
 from flask import Flask, jsonify
+import time , concurrent.futures
 
 app = Flask(__name__)
 
@@ -26,7 +27,17 @@ class ExecuteParallel(Execute):
 
    
     def ExecuteCode(self):
-        return jsonify({"Result": "Executed Code Parallel"})
+
+        start_time = time.time()
+
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            for _ in range(self.count):
+                executor.submit(time.sleep(1))
+
+        end_time = time.time()
+        elspase_time = end_time-start_time
+        return jsonify({"concurrent_time": elspase_time})
+
 
 
     #Magic method
@@ -40,7 +51,15 @@ class ExecuteSerial(Execute):
     
    
     def ExecuteCode(self):
-        return jsonify({"Result": "Executed Code Serial"})
+        
+        start_time = time.time()
+        
+        for _ in range(self.count):
+            time.sleep(1)
+
+        end_time = time.time()
+        elspase_time = end_time-start_time
+        return jsonify({"serial_time": elspase_time})
     
     #Magic method
     def __repr__(self):
@@ -52,14 +71,12 @@ def serial():
     ExecuteSerialResult = ObjectExecuteSerial.ExecuteCode()
     return ExecuteSerialResult
 
-
 @app.route("/parallel")
 def parallel():
     ObjectExecuteParallel =  ExecuteParallel(4)
     ExecuteParallelResult = ObjectExecuteParallel.ExecuteCode()
     return ExecuteParallelResult
     
-
 if __name__ == "__main__":
 
     app.run(debug=True, port=5500)
