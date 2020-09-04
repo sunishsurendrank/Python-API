@@ -20,7 +20,7 @@ class Execute(ABC):
     def ExecuteCode(self):
         pass
 
-class ExecuteParallel(Execute):
+class ExecuteConcurrently(Execute):
 
     def __init__(self,count):
         self.count = count
@@ -44,14 +44,14 @@ class ExecuteParallel(Execute):
     def __repr__(self):
         return f"{self.count}"
 
-class ExecuteSerial(Execute):
+class ExecuteSequencially(Execute):
 
     def __init__(self,count):
         self.count = count
     
    
     def ExecuteCode(self):
-        
+
         start_time = time.time()
         
         for _ in range(self.count):
@@ -65,21 +65,21 @@ class ExecuteSerial(Execute):
     def __repr__(self):
         return f"{self.count}"
 
-@app.route('/serial')
-def serial():
-    ObjectExecuteSerial  = ExecuteSerial(4)
-    ExecuteSerialResult = ObjectExecuteSerial.ExecuteCode()
-    return ExecuteSerialResult
+@app.route('/sequencial')
+def sequencial():
+    ObjectExecuteSequencially  = ExecuteSequencially(4)
+    ExecuteSequenciallyResult = ObjectExecuteSequencially.ExecuteCode()
+    return ExecuteSequenciallyResult
 
-@app.route("/parallel")
-def parallel():
-    ObjectExecuteParallel =  ExecuteParallel(4)
-    ExecuteParallelResult = ObjectExecuteParallel.ExecuteCode()
-    return ExecuteParallelResult
+@app.route("/concurrent")
+def concurrently():
+    ObjectExecuteConcurrently =  ExecuteConcurrently(4)
+    ExecuteConcurrentlyResult =  ObjectExecuteConcurrently.ExecuteCode()
+    return ExecuteConcurrentlyResult
     
 if __name__ == "__main__":
 
-    app.run(debug=True, port=5500)
+    app.run(debug=True, port=5000)
 
 
 
